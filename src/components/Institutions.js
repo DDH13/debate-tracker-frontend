@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -18,7 +18,7 @@ const Institutions = () => {
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(
-            `HTTP error! Status: ${response.status}, Body: ${errorText}`
+          `HTTP error! Status: ${response.status}, Body: ${errorText}`
         );
       }
       const data = await response.json();
@@ -35,7 +35,6 @@ const Institutions = () => {
     searchInstitutions();
   }, [searchInstitutions]);
 
-
   const handleMerge = async () => {
     if (selectedInstitutions.length > 0) {
       console.log("Selected Institutions:", selectedInstitutions);
@@ -44,7 +43,7 @@ const Institutions = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({institutionIds: selectedInstitutions}),
+        body: JSON.stringify({ institutionIds: selectedInstitutions }),
       });
       const result = await response.json();
       console.log(`Merge Result: ${result.message}`);
@@ -56,52 +55,61 @@ const Institutions = () => {
   };
 
   return (
-      <div>
-        <Paper
-            sx={{maxWidth: "94vw", marginInline: "auto", marginBlock: "4vh"}}
+    <div>
+      <Paper
+        sx={{
+          maxWidth: "94vw",
+          marginInline: "auto",
+          marginBlock: "4vh",
+          display: "flex",
+          flexDirection: "column",
+          maxHeight: "75vh",
+        }}
+      >
+        <StyledDataGrid
+          checkboxSelection={true}
+          disableRowSelectionOnClick={true}
+          onRowSelectionModelChange={(newSelectionModel) => {
+            setSelectedInstitutions(newSelectionModel);
+          }}
+          rows={institutions}
+          columns={[
+            {
+              field: "id",
+              headerName: "ID",
+              width: 100,
+              sortable: false,
+            },
+            {
+              field: "name",
+              headerName: "Institution Name",
+              flex: 1,
+              sortable: true,
+            },
+          ]}
+        />
+      </Paper>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          marginBlock: "2vh",
+          marginInline: "auto",
+          width: "25vw",
+          position: "sticky",
+          bottom: "5vh",
+        }}
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleMerge}
+          disabled={selectedInstitutions.length === 0}
         >
-          <StyledDataGrid
-              checkboxSelection={true}
-              disableRowSelectionOnClick={true}
-              onRowSelectionModelChange={(newSelectionModel) => {
-                setSelectedInstitutions(newSelectionModel);
-              }}
-              rows={institutions}
-              columns={[
-                {
-                  field: "id",
-                  headerName: "ID",
-                  width: 100,
-                  sortable: false,
-                },
-                {
-                  field: "name",
-                  headerName: "Institution Name",
-                  flex: 1,
-                  sortable: true,
-                },
-              ]}
-          />
-        </Paper>
-        <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              marginBlock: "2vh",
-              position: "sticky",
-              bottom: "5vh",
-            }}
-        >
-          <Button
-              variant="contained"
-              color="primary"
-              onClick={handleMerge}
-              disabled={selectedInstitutions.length === 0}
-          >
-            Merge Selected
-          </Button>
-        </Box>
-      </div>
+          Merge Selected
+        </Button>
+      </Box>
+    </div>
   );
 };
 

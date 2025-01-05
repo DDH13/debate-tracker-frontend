@@ -22,12 +22,12 @@ const App = () => {
                 <CssBaseline/>
                 <Menu />
                 <Routes>
-                    <Route path="/debaters" element={<Debaters />} />
                     <Route path="/master-tab" element={<MasterTab/>} />
-                    <Route path="/institutions" element={<Institutions />} />
+                    {/* <Route path="/debaters" element={<Debaters />} /> */}
+                    {/* <Route path="/institutions" element={<Institutions />} /> */}
                     <Route path="/graphs" element={<SpeakerGraphs />} />
                     <Route path="/judge-tab" element={<JudgeTab/>}/>
-                    <Route path="/judge" element={<Judges />} />
+                    {/* <Route path="/judge" element={<Judges />} /> */}
                     <Route path="/judge-sentiments" element={<JudgeSentiments/>} />
                 </Routes>
             </ThemeProvider>
