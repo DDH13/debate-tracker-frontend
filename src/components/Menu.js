@@ -1,7 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
-import { styled } from "@mui/material/styles";
+import {styled} from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button/Button";
 import Toolbar from "@mui/material/Toolbar";
@@ -34,9 +34,9 @@ const Menu = () => {
 
         <Box sx={{ flexGrow: 0 }}>
           {/*TODO  Move some of these to admin view*/}
-          {/*<NavButton component={Link} to="/debaters">*/}
-          {/*  Debaters*/}
-          {/*</NavButton>*/}
+          <NavButton component={Link} to="/debaters">
+            Debaters
+          </NavButton>
           <NavButton component={Link} to="/master-tab">
             Master Tab
           </NavButton>

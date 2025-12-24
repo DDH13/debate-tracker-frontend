@@ -9,8 +9,6 @@ import Menu from './components/Menu.js';
 import Debaters from './components/Debaters.js';
 import SpeakerGraphs from "./components/SpeakerGraphs.js";
 import MasterTab from "./components/MasterTab.js";
-import Institutions from "./components/Institutions.js";
-import Judges from "./components/Judges.js";
 import JudgeTab from "./components/JudgeTab.js";
 import JudgeSentiments from "./components/JudgeSentiments.js";
 
@@ -23,7 +21,7 @@ const App = () => {
                 <Menu />
                 <Routes>
                     <Route path="/master-tab" element={<MasterTab/>} />
-                    {/* <Route path="/debaters" element={<Debaters />} /> */}
+                    <Route path="/debaters" element={<Debaters/>}/>
                     {/* <Route path="/institutions" element={<Institutions />} /> */}
                     <Route path="/graphs" element={<SpeakerGraphs />} />
                     <Route path="/judge-tab" element={<JudgeTab/>}/>
