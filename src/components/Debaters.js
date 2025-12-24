@@ -89,14 +89,46 @@ const Debaters = () => {
                     rows={debaters}
                     columns={[
                         {
+                            field: "id",
+                            headerName: "ID",
+                            flex: 0.1,
+                            sortable: true,
+                        },
+                        {
                             field: "firstName",
                             headerName: "First Name",
-                            flex: 0.5,
+                            flex: 0.2,
                             sortable: true,
                         },
                         {
                             field: "lastName",
                             headerName: "Last Name",
+                            flex: 0.3,
+                            sortable: true,
+                        },
+                        {
+                            field: "fullName",
+                            headerName: "Full Name",
+                            flex: 1,
+                            sortable: true,
+                        },
+                        {
+                            field: "teams",
+                            headerName: "Team Names",
+                            flex: 1,
+                            sortable: true,
+                        },
+                        {
+                            field: "averageScore",
+                            headerName: "Average",
+                            type: "number",
+                            flex: 0.5,
+                            sortable: true,
+                        },
+                        {
+                            field: "roundsDebated",
+                            headerName: "Rounds Debated",
+                            type: "number",
                             flex: 0.5,
                             sortable: true,
                         },
