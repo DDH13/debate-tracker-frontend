@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -6,42 +6,45 @@ import StyledDataGrid from "../utils/styledDataGrid";
 
 const JudgeRounds = () => {
   const [judges, setJudges] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [selectedJudges, setSelectedJudges] = useState([]);
 
   const API_URL = `http://localhost:8080/api/v1/judge`;
 
-  const fetchJudges = async () => {
-    try {
-      const response = await fetch(API_URL+`/prelims-breaks-tournaments`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+  const fetchJudges = useCallback(
+    async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(API_URL+`/prelims-breaks-tournaments`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setJudges(data.map((item) => ({
+          id: item.id,
+          firstName: item.firstName,
+          lastName: item.lastName,
+          breaks: item.breaks,
+          prelims: item.prelims,
+          tournaments: item.tournaments || [],
+        })));
+        setSelectedJudges([]);
+      } catch (err) {
+        console.error("Error fetching judges:", err);
+      } finally {
+        setLoading(false);
       }
-      const data = await response.json();
-      setJudges(data.map((item) => ({
-        id: item.id,
-        firstName: item.firstName,
-        lastName: item.lastName,
-        breaks: item.breaks,
-        prelims: item.prelims,
-        tournaments: item.tournaments || [],
-      })));
-      setSelectedJudges([]);
-    } catch (err) {
-      console.error("Error fetching judges:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [API_URL]
+  );
 
   useEffect(() => {
     fetchJudges();
-  }, []);
+  }, [fetchJudges]);
 
   const handleMerge = async () => {
     if (selectedJudges.length === 2) {
       try {
-        setLoading(true);
         const response = await fetch(API_URL + "/replace", {
           method: "POST",
           headers: {
@@ -60,8 +63,6 @@ const JudgeRounds = () => {
       } catch (err) {
         console.error("Error merging judges:", err);
         alert("Failed to merge judges. Check console for details.");
-      } finally {
-        setLoading(false);
       }
     } else if (selectedJudges.length === 1 || selectedJudges.length === 0) {
       alert("Please select at least two judges.");
@@ -79,8 +80,6 @@ const JudgeRounds = () => {
     }
     return '';
   };
-
-  if (loading) return <p>Loading judges...</p>;
 
   return (
       <div>
@@ -126,28 +125,28 @@ const JudgeRounds = () => {
                 {
                   field: "firstName",
                   headerName: "First Name",
-                  flex: 0.3,
+                  flex: 0.2,
                   sortable: true,
                 },
                 {
                   field: "lastName",
                   headerName: "Last Name",
-                  flex: 0.3,
+                  flex: 0.2,
                   sortable: true,
                 },
                 {
                   field: "breaks",
                   headerName: "Breaks Judged",
                   type: "number",
-                  flex: 0.2,
-                  sortable: true,
+                  flex: 0.1,
+                  sortable: false,
                 },
                 {
                   field: "prelims",
                   headerName: "Prelims Judged",
                   type: "number",
-                  flex: 0.2,
-                  sortable: true,
+                  flex: 0.1,
+                  sortable: false,
                 },
                 {
                   field: "tournaments",
