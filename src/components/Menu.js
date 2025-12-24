@@ -46,6 +46,9 @@ const Menu = () => {
           {/*<NavButton component={Link} to="/institutions">*/}
           {/*  Institutions*/}
           {/*</NavButton>*/}
+          <NavButton component={Link} to="/judge">
+            Judges
+          </NavButton>
           <NavButton component={Link} to="/judge-tab">
             Judge Tab
           </NavButton>

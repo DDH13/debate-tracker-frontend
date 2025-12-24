@@ -10,6 +10,7 @@ import Debaters from './components/Debaters.js';
 import SpeakerGraphs from "./components/SpeakerGraphs.js";
 import MasterTab from "./components/MasterTab.js";
 import JudgeTab from "./components/JudgeTab.js";
+import Judges from "./components/Judges.js";
 import JudgeSentiments from "./components/JudgeSentiments.js";
 
 
@@ -25,7 +26,7 @@ const App = () => {
                     {/* <Route path="/institutions" element={<Institutions />} /> */}
                     <Route path="/graphs" element={<SpeakerGraphs />} />
                     <Route path="/judge-tab" element={<JudgeTab/>}/>
-                    {/* <Route path="/judge" element={<Judges />} /> */}
+                    <Route path="/judge" element={<Judges />} />
                     <Route path="/judge-sentiments" element={<JudgeSentiments/>} />
                 </Routes>
             </ThemeProvider>
