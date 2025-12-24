@@ -89,8 +89,14 @@ const Debaters = () => {
                 .old-debater-row {
                     background-color: #ffcdd2 !important;
                 }
+                .old-debater-row .MuiDataGrid-cell {
+                    color: black !important;
+                }
                 .new-debater-row {
                     background-color: #c8e6c9 !important;
+                }
+                .new-debater-row .MuiDataGrid-cell {
+                    color: black !important;
                 }
             `}</style>
             <Paper
