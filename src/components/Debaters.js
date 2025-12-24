@@ -73,8 +73,26 @@ const Debaters = () => {
         }
     };
 
+    const getRowClassName = (params) => {
+        if (selectedDebaters.length >= 1 && params.id === selectedDebaters[0]) {
+            return 'old-debater-row';
+        }
+        if (selectedDebaters.length >= 2 && params.id === selectedDebaters[1]) {
+            return 'new-debater-row';
+        }
+        return '';
+    };
+
     return (
         <div>
+            <style>{`
+                .old-debater-row {
+                    background-color: #ffcdd2 !important;
+                }
+                .new-debater-row {
+                    background-color: #c8e6c9 !important;
+                }
+            `}</style>
             <Paper
                 sx={{
                     maxWidth: "94vw",
@@ -91,6 +109,7 @@ const Debaters = () => {
                     onRowSelectionModelChange={(selection) => {
                         setSelectedDebaters(selection);
                     }}
+                    getRowClassName={getRowClassName}
                     rows={debaters}
                     columns={[
                         {
