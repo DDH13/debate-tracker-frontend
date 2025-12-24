@@ -146,15 +146,15 @@ const Debaters = () => {
                             field: "averageScore",
                             headerName: "Average",
                             type: "number",
-                            flex: 0.1,
-                            sortable: true,
+                            flex: 0.2,
+                            sortable: false,
                         },
                         {
                             field: "roundsDebated",
-                            headerName: "Rounds Debated",
+                            headerName: "Rounds",
                             type: "number",
-                            flex: 0.1,
-                            sortable: true,
+                            flex: 0.2,
+                            sortable: false,
                         },
                     ]}
                 />
