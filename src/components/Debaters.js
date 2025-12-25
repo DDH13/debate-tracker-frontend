@@ -58,8 +58,8 @@ const Debaters = () => {
                 if (!response.ok) {
                     throw new Error(`Merge failed: ${response.status}`);
                 }
-                setSelectedDebaters([]);
                 await searchDebaters();
+                setSelectedDebaters([]);
             } catch (err) {
                 console.error("Error merging debaters:", err);
                 alert("Failed to merge debaters. Check console for details.");
@@ -112,6 +112,7 @@ const Debaters = () => {
                 <StyledDataGrid
                     checkboxSelection={true}
                     disableRowSelectionOnClick={true}
+                    rowSelectionModel={selectedDebaters}
                     onRowSelectionModelChange={(selection) => {
                         setSelectedDebaters(selection);
                     }}

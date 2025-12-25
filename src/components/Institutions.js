@@ -53,8 +53,8 @@ const Institutions = () => {
       if (!response.ok) {
         throw new Error(`Submission failed: ${response.status}`);
       }
-      setSelectedInstitutions([]);
       await searchInstitutions();
+      setSelectedInstitutions([]);
     } catch (err) {
       console.error("Error submitting institutions:", err);
     }
@@ -99,6 +99,7 @@ const Institutions = () => {
         <StyledDataGrid
           checkboxSelection={true}
           disableRowSelectionOnClick={true}
+          rowSelectionModel={selectedInstitutions}
           onRowSelectionModelChange={(newSelectionModel) => {
             setSelectedInstitutions(newSelectionModel);
           }}

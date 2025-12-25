@@ -58,8 +58,8 @@ const JudgeRounds = () => {
         if (!response.ok) {
           throw new Error(`Merge failed: ${response.status}`);
         }
-        setSelectedJudges([]);
         await fetchJudges();
+        setSelectedJudges([]);
       } catch (err) {
         console.error("Error merging judges:", err);
         alert("Failed to merge judges. Check console for details.");
@@ -110,6 +110,7 @@ const JudgeRounds = () => {
           <StyledDataGrid
               checkboxSelection={true}
               disableRowSelectionOnClick={true}
+              rowSelectionModel={selectedJudges}
               onRowSelectionModelChange={(selection) => {
                 setSelectedJudges(selection);
               }}
