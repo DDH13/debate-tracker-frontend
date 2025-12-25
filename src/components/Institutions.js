@@ -14,7 +14,7 @@ const Institutions = () => {
   const searchInstitutions = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(API_URL);
+      const response = await fetch(API_URL+`/teams-list`);
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(
@@ -23,7 +23,7 @@ const Institutions = () => {
       }
       const data = await response.json();
       setInstitution(data);
-      setSelectedInstitutions([]); // Clear selected institutions after fetching new data
+      setSelectedInstitutions([]);
     } catch (err) {
       console.error("Error fetching institutions:", err);
     } finally {
@@ -35,27 +35,57 @@ const Institutions = () => {
     searchInstitutions();
   }, [searchInstitutions]);
 
-  const handleMerge = async () => {
-    if (selectedInstitutions.length > 0) {
-      console.log("Selected Institutions:", selectedInstitutions);
-      const response = await fetch(API_URL + "/merge", {
+  const handleSubmit = async () => {
+    if (selectedInstitutions.length < 1) {
+      alert("Please select at least one institution.");
+      return;
+    }
+    try {
+      const response = await fetch(API_URL + "/replace", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ institutionIds: selectedInstitutions }),
+        body: JSON.stringify({
+          institutionIds: selectedInstitutions,
+        }),
       });
-      const result = await response.json();
-      console.log(`Merge Result: ${result.message}`);
+      if (!response.ok) {
+        throw new Error(`Submission failed: ${response.status}`);
+      }
       setSelectedInstitutions([]);
       await searchInstitutions();
-    } else {
-      alert("Please select at least one institution.");
+    } catch (err) {
+      console.error("Error submitting institutions:", err);
     }
+  };
+
+  const getRowClassName = (params) => {
+    if (selectedInstitutions.length >= 1 && params.id === selectedInstitutions[0]) {
+      return 'primary-institution-row';
+    }
+    if (selectedInstitutions.includes(params.id) && params.id !== selectedInstitutions[0]) {
+      return 'secondary-institution-row';
+    }
+    return '';
   };
 
   return (
     <div>
+      <style>{`
+        .primary-institution-row {
+          background-color: #c8e6c9 !important;
+        }
+        .primary-institution-row .MuiDataGrid-cell {
+          color: black !important;
+        }
+        .secondary-institution-row {
+          background-color: #ffcdd2 !important;
+        }
+        .secondary-institution-row .MuiDataGrid-cell {
+          color: black !important;
+        }
+      `}</style>
       <Paper
         sx={{
           maxWidth: "94vw",
@@ -72,19 +102,43 @@ const Institutions = () => {
           onRowSelectionModelChange={(newSelectionModel) => {
             setSelectedInstitutions(newSelectionModel);
           }}
+          getRowClassName={getRowClassName}
           rows={institutions}
           columns={[
             {
               field: "id",
               headerName: "ID",
-              width: 100,
-              sortable: false,
+              flex: 0.1,
+              sortable: true,
             },
             {
               field: "name",
               headerName: "Institution Name",
-              flex: 1,
+              flex: 0.4,
               sortable: true,
+            },
+            {
+              field: "abbreviation",
+              headerName: "Abbreviation",
+              flex: 0.2,
+              sortable: true,
+            },
+            {
+              field: "teamCount",
+              headerName: "Team Count",
+              type: "number",
+              flex: 0.2,
+              sortable: true,
+            },
+            {
+              field: "teams",
+              headerName: "Teams",
+              flex: 1,
+              sortable: false,
+              renderCell: (params) => {
+                const teams = params.value || [];
+                return Array.isArray(teams) ? teams.join(", ") : teams;
+              },
             },
           ]}
         />
@@ -103,10 +157,10 @@ const Institutions = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleMerge}
+          onClick={handleSubmit}
           disabled={selectedInstitutions.length === 0}
         >
-          Merge Selected
+          Submit Selected
         </Button>
       </Box>
     </div>

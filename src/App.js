@@ -12,6 +12,7 @@ import MasterTab from "./components/MasterTab.js";
 import JudgeTab from "./components/JudgeTab.js";
 import Judges from "./components/Judges.js";
 import JudgeSentiments from "./components/JudgeSentiments.js";
+import Institutions from "./components/Institutions.js";
 
 
 const App = () => {
@@ -23,7 +24,7 @@ const App = () => {
                 <Routes>
                     <Route path="/master-tab" element={<MasterTab/>} />
                     <Route path="/debaters" element={<Debaters/>}/>
-                    {/* <Route path="/institutions" element={<Institutions />} /> */}
+                    <Route path="/institutions" element={<Institutions />} />
                     <Route path="/graphs" element={<SpeakerGraphs />} />
                     <Route path="/judge-tab" element={<JudgeTab/>}/>
                     <Route path="/judge" element={<Judges />} />
