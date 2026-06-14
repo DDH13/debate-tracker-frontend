@@ -1,80 +1,50 @@
 import React, { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { ScatterChart } from "@mui/x-charts/ScatterChart";
+import { getDebaters, getDebaterScores } from "../services/api";
 
 const SpeakerGraphs = () => {
-  const [allDebaters, setAllDebaters] = useState([]); // Stores all debaters for autofill
-  const [filteredDebaters, setFilteredDebaters] = useState([]); // Stores filtered debaters for search suggestions
-  const [selectedDebaterId, setSelectedDebaterId] = useState(null);
-  const [counts, setCounts] = useState([]); // Stores the counts for y-axis
+  const [allDebaters, setAllDebaters] = useState([]);
+  const [selectedDebater, setSelectedDebater] = useState(null);
+  const [counts, setCounts] = useState([]);
   const [tournamentScores, setTournamentScores] = useState([]);
-  const [minMaxTD, setMinMaxTD] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); // Search input value
+  const [error, setError] = useState(null);
 
-  const DEBATERS_API_URL = `http://localhost:8080/api/v1/debater`;
-  const SCORES_API_URL = `http://localhost:8080/api/v1/debater/speaks/`; // Use ID to fetch data
-
-  // Fetch all debaters on component mount
+  // Fetch all debaters on mount for the search box.
   useEffect(() => {
     const fetchDebaters = async () => {
       try {
-        const response = await fetch(DEBATERS_API_URL);
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
+        const data = await getDebaters();
         setAllDebaters(data);
       } catch (err) {
-        console.error("Error fetching debaters:", err);
+        setError(err.message);
       }
     };
     fetchDebaters();
   }, []);
 
-  // Filter debaters based on search query
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      const filtered = allDebaters.filter((debater) =>
-        `${debater.firstName} ${debater.lastName}`
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())
-      );
-      setFilteredDebaters(filtered);
-    } else {
-      setFilteredDebaters([]);
-      setSelectedDebaterId(null); // Clear the selected ID when the search is cleared
-    }
-  }, [searchQuery, allDebaters]);
-
-  // Fetch scores for the selected debater
   const fetchScores = async (debaterId) => {
     setLoading(true);
+    setError(null);
     try {
-      const response = await fetch(`${SCORES_API_URL}${debaterId}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data = await response.json();
+      const data = await getDebaterScores(debaterId);
 
-      const scoresData = [];
       const counts = {};
-      for (let i = 70; i <= 80; i += 0.5) {
-        counts[i] = 0;
-      }
       const _tournamentScores = [];
-      let minMaxTD = [null, null];
 
       data.tournamentRoundScores.forEach((tournament) => {
-        if (minMaxTD[0] === null || tournament.date < minMaxTD[0]) {
-          minMaxTD[0] = tournament.date;
-        }
-        if (minMaxTD[1] === null || tournament.date > minMaxTD[1]) {
-          minMaxTD[1] = tournament.date;
-        }
         tournament.roundScores.forEach((round, ind) => {
-          counts[round.score] += 1;
+          // Defensive: tally whatever score comes back, even off the 70–80 grid.
+          counts[round.score] = (counts[round.score] || 0) + 1;
           _tournamentScores.push({
             y: round.score,
             x: new Date(tournament.date),
@@ -83,41 +53,24 @@ const SpeakerGraphs = () => {
         });
       });
 
-      let countsX = Object.keys(counts).sort();
-      let countsY = countsX.map((key) => counts[key]);
+      // Sort score keys numerically (not lexicographically) before plotting.
+      const countsX = Object.keys(counts)
+        .map(Number)
+        .sort((a, b) => a - b);
+      const countsY = countsX.map((key) => counts[key]);
       setCounts([countsX, countsY]);
       setTournamentScores(_tournamentScores);
-      setMinMaxTD(minMaxTD);
-
     } catch (err) {
-      console.error("Error fetching scores:", err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (selectedDebaterId) {
-      fetchScores(selectedDebaterId);
-    } else {
-      console.error("No debater selected");
-    }
-  };
-
-  // Set debater ID based on the typed or selected name
-  const handleDebaterSelection = (e) => {
-    const name = e.target.value;
-    setSearchQuery(name);
-
-    const selectedDebater = allDebaters.find(
-      (debater) => `${debater.firstName} ${debater.lastName}` === name
-    );
     if (selectedDebater) {
-      setSelectedDebaterId(selectedDebater.id);
-    } else {
-      setSelectedDebaterId(null); // Clear if no exact match
+      fetchScores(selectedDebater.id);
     }
   };
 
@@ -133,29 +86,42 @@ const SpeakerGraphs = () => {
           alignItems: "center",
           justifyContent: "center",
           gap: "20px",
-          height: "10vh",
+          minHeight: "10vh",
+          padding: "1vh",
         }}
       >
-        <h2>Speaker Performance</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Enter speaker's name"
-            value={searchQuery}
-            onChange={handleDebaterSelection} // Handles both search and ID setting
-            list="debater-list" // Enable autofill with suggestions
+        <Typography variant="h6" component="h2">
+          Speaker Performance
+        </Typography>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: "flex", gap: "12px", alignItems: "center" }}
+        >
+          <Autocomplete
+            options={allDebaters}
+            value={selectedDebater}
+            onChange={(_, value) => setSelectedDebater(value)}
+            getOptionLabel={(option) =>
+              `${option.firstName} ${option.lastName}`
+            }
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            sx={{ width: 300 }}
+            renderInput={(params) => (
+              <TextField {...params} label="Search speaker" size="small" />
+            )}
           />
-          <datalist id="debater-list">
-            {filteredDebaters.map((debater) => (
-              <option
-                key={debater.id}
-                value={`${debater.firstName} ${debater.lastName}`}
-              />
-            ))}
-          </datalist>
-          <button type="submit">Fetch Scores</button>
-        </form>
+          <Button type="submit" variant="contained" disabled={!selectedDebater}>
+            Fetch Scores
+          </Button>
+        </Box>
       </Paper>
+
+      {error && (
+        <Box sx={{ display: "flex", justifyContent: "center", marginBlock: "2vh" }}>
+          <Alert severity="error">{error}</Alert>
+        </Box>
+      )}
 
       <Paper
         sx={{
@@ -169,42 +135,28 @@ const SpeakerGraphs = () => {
           height: "60vh",
         }}
       >
-        {loading && <p>Loading scores...</p>}
+        {loading && <CircularProgress />}
 
-        {tournamentScores.length > 0 && (
+        {!loading && tournamentScores.length > 0 && (
           <ScatterChart
             xAxis={[
               {
                 label: "Tournament Dates",
                 type: "utc",
                 valueFormatter: (date) => {
-                  if (date instanceof Date) {
-                    return date.toISOString().split("T")[0];
-                  } else {
-                    let newDate = new Date(date);
-                    return newDate.toISOString().split("T")[0];
-                  }
+                  const d = date instanceof Date ? date : new Date(date);
+                  return d.toISOString().split("T")[0];
                 },
               },
             ]}
-            yAxis={[
-              {
-                label: "Scores",
-                min: 70,
-                max: 80,
-              },
-            ]}
-            series={[
-              {
-                data: tournamentScores,
-              },
-            ]}
+            yAxis={[{ label: "Scores", min: 70, max: 80 }]}
+            series={[{ data: tournamentScores }]}
             width={600}
             height={400}
           />
         )}
 
-        {counts.length > 0 && (
+        {!loading && counts.length > 0 && (
           <LineChart
             xAxis={[{ data: counts[0], min: 70, max: 80, label: "Score" }]}
             series={[
@@ -212,22 +164,20 @@ const SpeakerGraphs = () => {
                 data: counts[1],
                 area: true,
                 type: "line",
-                // curve: "monotoneX",
                 connectNulls: true,
-                // label: "Count",
                 showMark: false,
               },
             ]}
-            yAxis={[
-              {
-                label: "Scores",
-                min: 0,
-                max: Math.max(...counts[1]) + 2,
-              },
-            ]}
+            yAxis={[{ label: "Scores", min: 0, max: Math.max(...counts[1]) + 2 }]}
             height={400}
             width={600}
           />
+        )}
+
+        {!loading && tournamentScores.length === 0 && (
+          <Typography color="text.secondary">
+            Search for a speaker and fetch scores to see their performance.
+          </Typography>
         )}
       </Paper>
     </div>

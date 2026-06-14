@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import {BrowserRouter as Router, Navigate, Route, Routes} from 'react-router-dom';
 import {ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -13,6 +13,7 @@ import JudgeTab from "./components/JudgeTab.js";
 import Judges from "./components/Judges.js";
 import JudgeSentiments from "./components/JudgeSentiments.js";
 import Institutions from "./components/Institutions.js";
+import ImportTournament from "./components/ImportTournament.js";
 
 
 const App = () => {
@@ -22,6 +23,7 @@ const App = () => {
                 <CssBaseline/>
                 <Menu />
                 <Routes>
+                    <Route path="/" element={<Navigate to="/master-tab" replace />} />
                     <Route path="/master-tab" element={<MasterTab/>} />
                     <Route path="/debaters" element={<Debaters/>}/>
                     <Route path="/institutions" element={<Institutions />} />
@@ -29,6 +31,7 @@ const App = () => {
                     <Route path="/judge-tab" element={<JudgeTab/>}/>
                     <Route path="/judge" element={<Judges />} />
                     <Route path="/judge-sentiments" element={<JudgeSentiments/>} />
+                    <Route path="/import" element={<ImportTournament/>} />
                 </Routes>
             </ThemeProvider>
         </Router>
