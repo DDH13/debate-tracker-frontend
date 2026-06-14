@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import {BrowserRouter as Router, Navigate, Route, Routes} from 'react-router-dom';
 import {ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -22,6 +22,7 @@ const App = () => {
                 <CssBaseline/>
                 <Menu />
                 <Routes>
+                    <Route path="/" element={<Navigate to="/master-tab" replace />} />
                     <Route path="/master-tab" element={<MasterTab/>} />
                     <Route path="/debaters" element={<Debaters/>}/>
                     <Route path="/institutions" element={<Institutions />} />

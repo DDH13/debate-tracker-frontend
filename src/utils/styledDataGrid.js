@@ -1,5 +1,5 @@
 import { DataGrid } from "@mui/x-data-grid";
-import { styled, lighten, darken } from "@mui/material/styles";
+import { styled, lighten } from "@mui/material/styles";
 
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   "& .MuiDataGrid-columnHeader": {
