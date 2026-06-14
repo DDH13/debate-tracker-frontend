@@ -39,6 +39,10 @@ admin "merge/replace" screens for de-duplicating debaters, judges, and instituti
   checkbox-select + confirm-dialog + snackbar merge screens. Used by `Debaters`,
   `Judges`, `Institutions`. `mode="merge"` requires exactly 2 (old→new);
   `mode="submit"` requires ≥1 (first selection = survivor).
+- `src/components/ImportTournament.js` — `/import` page; uploads a Tabbycat XML via
+  `validateTournamentXml` (multipart `POST /tournament/validate`) and renders the
+  `ValidationReportDTO`. Dry-run only (no persistence). Note: `apiFetch` skips its
+  default JSON content-type when the body is `FormData` — required for multipart uploads.
 - `src/utils/styledDataGrid.js` — themed DataGrid (zebra rows, header styling).
 - `src/theme.js` — single dark palette; red is the brand accent, body text light.
 - Routes live in `src/App.js`; nav links in `src/components/Menu.js` (`LINKS`).

@@ -30,6 +30,12 @@ and throws descriptive errors on non-2xx.
   checkbox-select + confirm-dialog + snackbar merge screens. Used by `Debaters`,
   `Judges`, `Institutions`. `mode="merge"` requires exactly 2 (old→new);
   `mode="submit"` requires ≥1 (first = survivor).
+- `src/components/ImportTournament.js` — `/import` page. Uploads a Tabbycat XML via
+  `validateTournamentXml` (`POST /tournament/validate`, multipart) and renders the
+  returned `ValidationReportDTO` (verdict banner + summary chips + findings grid).
+  Findings may carry a `matches` array (existing DB debaters a name matched, with
+  their id/institution/teams) for `DEBATER_EXISTS`/`DEBATER_AMBIGUOUS` codes — shown
+  in the "Matched speakers" column. Dry-run only — nothing is persisted.
 - `src/utils/styledDataGrid.js` — themed DataGrid (zebra rows, header styling).
 - `src/theme.js` — single dark palette; red is the brand accent, body text light.
 

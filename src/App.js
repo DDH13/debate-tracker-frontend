@@ -13,6 +13,7 @@ import JudgeTab from "./components/JudgeTab.js";
 import Judges from "./components/Judges.js";
 import JudgeSentiments from "./components/JudgeSentiments.js";
 import Institutions from "./components/Institutions.js";
+import ImportTournament from "./components/ImportTournament.js";
 
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
                     <Route path="/judge-tab" element={<JudgeTab/>}/>
                     <Route path="/judge" element={<Judges />} />
                     <Route path="/judge-sentiments" element={<JudgeSentiments/>} />
+                    <Route path="/import" element={<ImportTournament/>} />
                 </Routes>
             </ThemeProvider>
         </Router>

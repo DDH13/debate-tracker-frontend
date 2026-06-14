@@ -9,10 +9,15 @@ const BASE_URL =
  * descriptive Error on non-2xx responses, and returns parsed JSON.
  */
 export const apiFetch = async (path, options = {}) => {
+  // For FormData bodies, let the browser set the multipart Content-Type
+  // (with boundary) — forcing application/json here would break the upload.
+  const isFormData =
+    typeof FormData !== "undefined" && options.body instanceof FormData;
+
   const response = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(options.headers || {}),
     },
   });
@@ -65,3 +70,12 @@ export const mergeInstitutions = (institutionIds) =>
 // --- Statistics ---
 export const getJudgeSentiments = (allowedDeviation = 0.5) =>
   apiFetch(`/statistics/sentiment?allowed-deviation=${allowedDeviation}`);
+
+// --- Tournament import ---
+// Dry-run validation of a Tabbycat XML export. Returns a ValidationReportDTO
+// without persisting anything.
+export const validateTournamentXml = (file) => {
+  const form = new FormData();
+  form.append("file", file);
+  return apiFetch("/tournament/validate", { method: "POST", body: form });
+};

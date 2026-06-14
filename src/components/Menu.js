@@ -18,6 +18,7 @@ const LINKS = [
   { to: "/judge", label: "Judges" },
   { to: "/judge-tab", label: "Judge Tab" },
   { to: "/judge-sentiments", label: "Scoring Sentiments" },
+  { to: "/import", label: "Import XML" },
 ];
 
 const NavButton = styled(Button, {
